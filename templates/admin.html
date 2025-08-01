@@ -75,17 +75,17 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <a href="{{ url_for('add_user') }}" class="btn btn-success btn-lg w-100 mb-3">
+                                        <a href="{{ url_for('admin.add_user') }}" class="btn btn-success btn-lg w-100 mb-3">
                                             <i class="fas fa-user-plus me-2"></i>إضافة مستخدم جديد
                                         </a>
                                     </div>
                                     <div class="col-md-4">
-                                        <a href="{{ url_for('index') }}" class="btn btn-info btn-lg w-100 mb-3">
+                                        <a href="{{ url_for('main.index') }}" class="btn btn-info btn-lg w-100 mb-3">
                                             <i class="fas fa-users me-2"></i>إدارة العملاء
                                         </a>
                                     </div>
                                     <div class="col-md-4">
-                                        <a href="{{ url_for('profile') }}" class="btn btn-warning btn-lg w-100 mb-3">
+                                        <a href="{{ url_for('main.profile') }}" class="btn btn-warning btn-lg w-100 mb-3">
                                             <i class="fas fa-user-circle me-2"></i>الملف الشخصي
                                         </a>
                                     </div>
@@ -156,12 +156,12 @@
                                         </td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="{{ url_for('edit_user', id=user.id) }}" 
+                                                <a href="{{ url_for('admin.edit_user', id=user.id) }}" 
                                                    class="btn btn-warning btn-sm" title="تعديل">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 {% if user.id != current_user.id %}
-                                                <a href="{{ url_for('delete_user', id=user.id) }}" 
+                                                <a href="{{ url_for('admin.delete_user', id=user.id) }}" 
                                                    class="btn btn-danger btn-sm" 
                                                    onclick="return confirm('هل أنت متأكد من حذف هذا المستخدم؟ سيتم حذف جميع عملائه أيضاً.')" 
                                                    title="حذف">

@@ -14,7 +14,7 @@
             <div class="card-body">
                 <!-- Advanced Filters -->
                 <div class="filter-section">
-                    <form method="GET" action="{{ url_for('index') }}" class="row g-3">
+                    <form method="GET" action="{{ url_for('main.index') }}" class="row g-3">
                         <div class="col-md-4">
                             <label for="query" class="form-label">
                                 <i class="fas fa-search me-1"></i>البحث
@@ -65,7 +65,7 @@
                             إجمالي النتائج: {{ clients.total }} عميل
                         </h6>
                     </div>
-                    <a href="{{ url_for('add_client') }}" class="btn btn-success">
+                    <a href="{{ url_for('main.add_client') }}" class="btn btn-success">
                         <i class="fas fa-plus me-1"></i>إضافة عميل جديد
                     </a>
                 </div>
@@ -143,11 +143,11 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ url_for('edit_client', id=client.id) }}" 
+                                        <a href="{{ url_for('main.edit_client', id=client.id) }}" 
                                            class="btn btn-warning btn-sm" title="تعديل">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="{{ url_for('delete_client', id=client.id) }}" 
+                                        <a href="{{ url_for('main.delete_client', id=client.id) }}" 
                                            class="btn btn-danger btn-sm" 
                                            onclick="return confirm('هل أنت متأكد من حذف هذا العميل؟')" 
                                            title="حذف">
@@ -167,7 +167,7 @@
                     <ul class="pagination">
                         {% if clients.has_prev %}
                         <li class="page-item">
-                            <a class="page-link" href="{{ url_for('index', page=clients.prev_num, query=search_query, response_filter=response_filter, date_filter=date_filter) }}">
+                            <a class="page-link" href="{{ url_for('main.index', page=clients.prev_num, query=search_query, response_filter=response_filter, date_filter=date_filter) }}">
                                 <i class="fas fa-chevron-right"></i>
                             </a>
                         </li>
@@ -177,7 +177,7 @@
                             {% if page_num %}
                                 {% if page_num != clients.page %}
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ url_for('index', page=page_num, query=search_query, response_filter=response_filter, date_filter=date_filter) }}">
+                                    <a class="page-link" href="{{ url_for('main.index', page=page_num, query=search_query, response_filter=response_filter, date_filter=date_filter) }}">
                                         {{ page_num }}
                                     </a>
                                 </li>
@@ -195,7 +195,7 @@
                         
                         {% if clients.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="{{ url_for('index', page=clients.next_num, query=search_query, response_filter=response_filter, date_filter=date_filter) }}">
+                            <a class="page-link" href="{{ url_for('main.index', page=clients.next_num, query=search_query, response_filter=response_filter, date_filter=date_filter) }}">
                                 <i class="fas fa-chevron-left"></i>
                             </a>
                         </li>
@@ -209,7 +209,7 @@
                     <i class="fas fa-users fa-3x text-muted mb-3"></i>
                     <h5 class="text-muted">لا توجد عملاء مسجلين</h5>
                     <p class="text-muted">ابدأ بإضافة عميل جديد</p>
-                    <a href="{{ url_for('add_client') }}" class="btn btn-primary">
+                    <a href="{{ url_for('main.add_client') }}" class="btn btn-primary">
                         <i class="fas fa-plus me-1"></i>إضافة عميل جديد
                     </a>
                 </div>
