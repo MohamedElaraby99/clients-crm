@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}قائمة العملاء{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-list me-2"></i>قائمة العملاء
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Advanced Filters -->
+                <div class="filter-section">
+                    <form method="GET" action="{{ url_for('index') }}" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="query" class="form-label">
+                                <i class="fas fa-search me-1"></i>البحث
+                            </label>
+                            <input type="text" class="form-control" name="query" 
+                                   placeholder="البحث بالاسم أو رقم الهاتف أو الاستجابة..." 
+                                   value="{{ search_query }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="response_filter" class="form-label">
+                                <i class="fas fa-filter me-1"></i>فلتر الاستجابة
+                            </label>
+                            <select class="form-select" name="response_filter">
+                                <option value="">جميع الاستجابات</option>
+                                {% for response in responses %}
+                                <option value="{{ response }}" {% if response_filter == response %}selected{% endif %}>
+                                    {{ response }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="date_filter" class="form-label">
+                                <i class="fas fa-calendar me-1"></i>فلتر التاريخ
+                            </label>
+                            <select class="form-select" name="date_filter">
+                                <option value="">جميع التواريخ</option>
+                                <option value="today" {% if date_filter == 'today' %}selected{% endif %}>اليوم</option>
+                                <option value="week" {% if date_filter == 'week' %}selected{% endif %}>آخر أسبوع</option>
+                                <option value="month" {% if date_filter == 'month' %}selected{% endif %}>آخر شهر</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <div class="d-grid w-100">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search me-1"></i>بحث
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Add Client Button -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h6 class="text-muted mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            إجمالي النتائج: {{ clients.total }} عميل
+                        </h6>
+                    </div>
+                    <a href="{{ url_for('add_client') }}" class="btn btn-success">
+                        <i class="fas fa-plus me-1"></i>إضافة عميل جديد
+                    </a>
+                </div>
+
+                <!-- Clients Table -->
+                {% if clients.items %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>اسم العميل</th>
+                                <th>رقم الهاتف</th>
+                                <th>تاريخ الاتصال</th>
+                                <th>الاستجابة</th>
+                                <th>ملاحظات</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for client in clients.items %}
+                            <tr>
+                                <td>{{ client.id }}</td>
+                                <td>
+                                    <strong>{{ client.name }}</strong>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-2">
+                                            {{ client.phone }}
+                                        </span>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="tel:{{ client.phone }}" 
+                                               class="btn btn-outline-primary" 
+                                               title="اتصال">
+                                                <i class="fas fa-phone"></i>
+                                            </a>
+                                            <a href="https://wa.me/{{ client.phone|replace('+', '')|replace(' ', '') }}" 
+                                               target="_blank"
+                                               class="btn btn-outline-success" 
+                                               title="واتساب">
+                                                <i class="fab fa-whatsapp"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small>{{ client.call_date.strftime('%Y-%m-%d %I:%M %p') if client.call_date else 'غير محدد' }}</small>
+                                </td>
+                                <td>
+                                    {% if client.response == 'قبل العرض' %}
+                                        <span class="response-badge response-accepted">قبل العرض</span>
+                                    {% elif client.response == 'رفض' %}
+                                        <span class="response-badge response-rejected">رفض</span>
+                                    {% elif client.response == 'في الانتظار' %}
+                                        <span class="response-badge response-pending">في الانتظار</span>
+                                    {% elif client.response == 'يحتاج اتصال آخر' %}
+                                        <span class="response-badge response-callback">يحتاج اتصال آخر</span>
+                                    {% elif client.response == 'غير متاح' %}
+                                        <span class="response-badge response-rejected">غير متاح</span>
+                                    {% elif client.response == 'رقم خاطئ' %}
+                                        <span class="response-badge response-rejected">رقم خاطئ</span>
+                                    {% elif client.response == 'لا يرد' %}
+                                        <span class="response-badge response-pending">لا يرد</span>
+                                    {% else %}
+                                        <span class="response-badge response-pending">{{ client.response }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if client.notes %}
+                                        <small class="text-muted">{{ client.notes[:50] }}{% if client.notes|length > 50 %}...{% endif %}</small>
+                                    {% else %}
+                                        <small class="text-muted">لا توجد ملاحظات</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('edit_client', id=client.id) }}" 
+                                           class="btn btn-warning btn-sm" title="تعديل">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ url_for('delete_client', id=client.id) }}" 
+                                           class="btn btn-danger btn-sm" 
+                                           onclick="return confirm('هل أنت متأكد من حذف هذا العميل؟')" 
+                                           title="حذف">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if clients.pages > 1 %}
+                <nav aria-label="صفحات العملاء">
+                    <ul class="pagination">
+                        {% if clients.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('index', page=clients.prev_num, query=search_query, response_filter=response_filter, date_filter=date_filter) }}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for page_num in clients.iter_pages(left_edge=2, left_current=2, right_current=3, right_edge=2) %}
+                            {% if page_num %}
+                                {% if page_num != clients.page %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('index', page=page_num, query=search_query, response_filter=response_filter, date_filter=date_filter) }}">
+                                        {{ page_num }}
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_num }}</span>
+                                </li>
+                                {% endif %}
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if clients.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('index', page=clients.next_num, query=search_query, response_filter=response_filter, date_filter=date_filter) }}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">لا توجد عملاء مسجلين</h5>
+                    <p class="text-muted">ابدأ بإضافة عميل جديد</p>
+                    <a href="{{ url_for('add_client') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>إضافة عميل جديد
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Custom styles for phone action buttons */
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 8px;
+    margin: 0 2px;
+}
+
+.btn-group-sm .btn:hover {
+    transform: scale(1.1);
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+/* Responsive adjustments for phone column */
+@media (max-width: 768px) {
+    .d-flex.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .btn-group-sm {
+        margin-top: 5px;
+    }
+}
+</style>
+{% endblock %} 

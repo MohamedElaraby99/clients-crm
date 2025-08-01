@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}لوحة الإدارة{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">
+                    <i class="fas fa-cog me-2"></i>لوحة الإدارة
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h3 class="mb-0">{{ total_users }}</h3>
+                                    <p class="mb-0">إجمالي المستخدمين</p>
+                                </div>
+                                <i class="fas fa-users fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stats-card" style="background: linear-gradient(45deg, #56ab2f, #a8e6cf);">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h3 class="mb-0">{{ total_clients }}</h3>
+                                    <p class="mb-0">إجمالي العملاء</p>
+                                </div>
+                                <i class="fas fa-user-tie fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stats-card" style="background: linear-gradient(45deg, #f7971e, #ffd200);">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h3 class="mb-0">{{ users|selectattr('is_admin', 'equalto', True)|list|length }}</h3>
+                                    <p class="mb-0">المديرين</p>
+                                </div>
+                                <i class="fas fa-crown fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stats-card" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h3 class="mb-0">{{ users|selectattr('is_admin', 'equalto', False)|list|length }}</h3>
+                                    <p class="mb-0">المستخدمين العاديين</p>
+                                </div>
+                                <i class="fas fa-user fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Actions -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-tools me-2"></i>إجراءات الإدارة
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <a href="{{ url_for('add_user') }}" class="btn btn-success btn-lg w-100 mb-3">
+                                            <i class="fas fa-user-plus me-2"></i>إضافة مستخدم جديد
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <a href="{{ url_for('index') }}" class="btn btn-info btn-lg w-100 mb-3">
+                                            <i class="fas fa-users me-2"></i>إدارة العملاء
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <a href="{{ url_for('profile') }}" class="btn btn-warning btn-lg w-100 mb-3">
+                                            <i class="fas fa-user-circle me-2"></i>الملف الشخصي
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users me-2"></i>إدارة المستخدمين
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>اسم المستخدم</th>
+                                        <th>البريد الإلكتروني</th>
+                                        <th>عدد العملاء</th>
+                                        <th>تاريخ التسجيل</th>
+                                        <th>الصلاحية</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in users %}
+                                    <tr>
+                                        <td>{{ user.id }}</td>
+                                        <td>
+                                            <strong>{{ user.username }}</strong>
+                                            {% if user.is_admin %}
+                                            <i class="fas fa-crown text-warning ms-1" title="مدير النظام"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ user.email }}</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ user.clients|length }}</span>
+                                        </td>
+                                        <td>
+                                            <small>{{ user.created_at.strftime('%Y-%m-%d') }}</small>
+                                        </td>
+                                        <td>
+                                            {% if user.is_admin %}
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="fas fa-crown me-1"></i>مدير
+                                            </span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-user me-1"></i>مستخدم
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if user.id == current_user.id %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-user-check me-1"></i>أنت
+                                            </span>
+                                            {% else %}
+                                            <span class="badge bg-info">نشط</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ url_for('edit_user', id=user.id) }}" 
+                                                   class="btn btn-warning btn-sm" title="تعديل">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                {% if user.id != current_user.id %}
+                                                <a href="{{ url_for('delete_user', id=user.id) }}" 
+                                                   class="btn btn-danger btn-sm" 
+                                                   onclick="return confirm('هل أنت متأكد من حذف هذا المستخدم؟ سيتم حذف جميع عملائه أيضاً.')" 
+                                                   title="حذف">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Information -->
+                <div class="card mt-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>معلومات النظام
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>إحصائيات سريعة:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check-circle text-success me-2"></i>النظام يعمل بشكل طبيعي</li>
+                                    <li><i class="fas fa-database text-info me-2"></i>قاعدة البيانات متصلة</li>
+                                    <li><i class="fas fa-shield-alt text-warning me-2"></i>نظام الأمان مفعل</li>
+                                    <li><i class="fas fa-users text-primary me-2"></i>إدارة المستخدمين مفعلة</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>آخر التحديثات:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-plus text-success me-2"></i>إضافة نظام المصادقة</li>
+                                    <li><i class="fas fa-plus text-success me-2"></i>إضافة الفلاتر والبحث</li>
+                                    <li><i class="fas fa-plus text-success me-2"></i>إضافة التصفح المتجاوب</li>
+                                    <li><i class="fas fa-plus text-success me-2"></i>إضافة إدارة المديرين</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

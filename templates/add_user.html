@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}إضافة مستخدم جديد{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-user-plus me-2"></i>إضافة مستخدم جديد
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="username" class="form-label fw-bold">
+                                <i class="fas fa-user me-2"></i>اسم المستخدم *
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="username" name="username" 
+                                   placeholder="أدخل اسم المستخدم" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="email" class="form-label fw-bold">
+                                <i class="fas fa-envelope me-2"></i>البريد الإلكتروني *
+                            </label>
+                            <input type="email" class="form-control form-control-lg" id="email" name="email" 
+                                   placeholder="أدخل البريد الإلكتروني" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="password" class="form-label fw-bold">
+                                <i class="fas fa-lock me-2"></i>كلمة المرور *
+                            </label>
+                            <input type="password" class="form-control form-control-lg" id="password" name="password" 
+                                   placeholder="أدخل كلمة المرور" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-shield-alt me-2"></i>الصلاحيات
+                            </label>
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="checkbox" id="is_admin" name="is_admin">
+                                <label class="form-check-label fw-bold" for="is_admin">
+                                    <i class="fas fa-crown me-1"></i>مدير النظام
+                                </label>
+                                <small class="form-text text-muted d-block">
+                                    المدير يمكنه إدارة جميع المستخدمين والعملاء
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-right me-2"></i>عودة للإدارة
+                        </a>
+                        <button type="submit" class="btn btn-info btn-lg">
+                            <i class="fas fa-save me-2"></i>إضافة المستخدم
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-focus on username field
+    document.getElementById('username').focus();
+    
+    // Password strength indicator
+    const passwordInput = document.getElementById('password');
+    passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        let strength = 0;
+        
+        if (password.length >= 6) strength++;
+        if (password.match(/[a-z]/)) strength++;
+        if (password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/)) strength++;
+        if (password.match(/[^a-zA-Z0-9]/)) strength++;
+        
+        // Remove existing strength classes
+        this.classList.remove('border-danger', 'border-warning', 'border-success');
+        
+        // Add appropriate strength class
+        if (strength < 2) {
+            this.classList.add('border-danger');
+        } else if (strength < 4) {
+            this.classList.add('border-warning');
+        } else {
+            this.classList.add('border-success');
+        }
+    });
+});
+</script>
+{% endblock %} 

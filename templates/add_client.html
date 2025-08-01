@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}إضافة عميل جديد{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-user-plus me-2"></i>إضافة عميل جديد
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="name" class="form-label fw-bold">
+                                <i class="fas fa-user me-2"></i>اسم العميل *
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="name" name="name" 
+                                   placeholder="أدخل اسم العميل" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="phone" class="form-label fw-bold">
+                                <i class="fas fa-phone me-2"></i>رقم الهاتف *
+                            </label>
+                            <div class="input-group">
+                                <select class="form-select form-select-lg" id="country_code" style="max-width: 120px;">
+                                    <option value="+966">🇸🇦 +966</option>
+                                    <option value="+20">🇪🇬 +20</option>
+                                </select>
+                                <input type="tel" class="form-control form-control-lg" id="phone" name="phone" 
+                                       placeholder="أدخل رقم الهاتف" required>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                مثال: 5xxxxxxxx (سعودي) أو 1xxxxxxxxx (مصري)
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="response" class="form-label fw-bold">
+                            <i class="fas fa-comment me-2"></i>استجابة العميل *
+                        </label>
+                        <select class="form-select form-select-lg" id="response" name="response" required>
+                            <option value="">اختر استجابة العميل</option>
+                            <option value="قبل العرض">قبل العرض</option>
+                            <option value="رفض">رفض</option>
+                            <option value="في الانتظار">في الانتظار</option>
+                            <option value="يحتاج اتصال آخر">يحتاج اتصال آخر</option>
+                            <option value="غير متاح">غير متاح</option>
+                            <option value="رقم خاطئ">رقم خاطئ</option>
+                            <option value="لا يرد">لا يرد</option>
+                            <option value="مشغول">مشغول</option>
+                            <option value="طلب إعادة الاتصال">طلب إعادة الاتصال</option>
+                            <option value="مهتم">مهتم</option>
+                            <option value="غير مهتم">غير مهتم</option>
+                            <option value="يحتاج مزيد من المعلومات">يحتاج مزيد من المعلومات</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="notes" class="form-label fw-bold">
+                            <i class="fas fa-sticky-note me-2"></i>ملاحظات
+                        </label>
+                        <textarea class="form-control" id="notes" name="notes" rows="4" 
+                                  placeholder="أدخل أي ملاحظات إضافية حول الاتصال..."></textarea>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-right me-2"></i>عودة للقائمة
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-save me-2"></i>حفظ العميل
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countryCodeSelect = document.getElementById('country_code');
+    const phoneInput = document.getElementById('phone');
+    
+    // Phone number formatting based on country
+    function formatPhoneNumber(value, countryCode) {
+        // Remove all non-digits
+        let cleaned = value.replace(/\D/g, '');
+        
+        if (countryCode === '+966') {
+            // Saudi format: 5xxxxxxxx
+            if (cleaned.startsWith('0')) {
+                cleaned = cleaned.substring(1);
+            }
+            if (cleaned.startsWith('966')) {
+                cleaned = cleaned.substring(3);
+            }
+            // Ensure it starts with 5 for Saudi numbers
+            if (cleaned.length > 0 && !cleaned.startsWith('5')) {
+                cleaned = '5' + cleaned;
+            }
+            // Limit to 9 digits for Saudi numbers
+            cleaned = cleaned.substring(0, 9);
+        } else if (countryCode === '+20') {
+            // Egyptian format: 1xxxxxxxxx
+            if (cleaned.startsWith('0')) {
+                cleaned = cleaned.substring(1);
+            }
+            if (cleaned.startsWith('20')) {
+                cleaned = cleaned.substring(2);
+            }
+            // Ensure it starts with 1 for Egyptian numbers
+            if (cleaned.length > 0 && !cleaned.startsWith('1')) {
+                cleaned = '1' + cleaned;
+            }
+            // Limit to 10 digits for Egyptian numbers
+            cleaned = cleaned.substring(0, 10);
+        }
+        
+        return cleaned;
+    }
+    
+    // Update phone number when country code changes
+    countryCodeSelect.addEventListener('change', function() {
+        const currentValue = phoneInput.value.replace(/\D/g, '');
+        const formattedValue = formatPhoneNumber(currentValue, this.value);
+        phoneInput.value = formattedValue;
+        updatePlaceholder();
+    });
+    
+    // Format phone number on input
+    phoneInput.addEventListener('input', function(e) {
+        const countryCode = countryCodeSelect.value;
+        const formattedValue = formatPhoneNumber(e.target.value, countryCode);
+        e.target.value = formattedValue;
+    });
+    
+    // Update placeholder based on country
+    function updatePlaceholder() {
+        const countryCode = countryCodeSelect.value;
+        if (countryCode === '+966') {
+            phoneInput.placeholder = '5xxxxxxxx (سعودي)';
+        } else if (countryCode === '+20') {
+            phoneInput.placeholder = '1xxxxxxxxx (مصري)';
+        }
+    }
+    
+    // Initialize placeholder
+    updatePlaceholder();
+    
+    // Auto-focus on name field
+    document.getElementById('name').focus();
+    
+    // Update form submission to include country code
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const countryCode = countryCodeSelect.value;
+        const phoneNumber = phoneInput.value;
+        const fullPhoneNumber = countryCode + phoneNumber;
+        
+        // Create a hidden input for the full phone number
+        let hiddenInput = document.getElementById('full_phone');
+        if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.id = 'full_phone';
+            hiddenInput.name = 'phone';
+            this.appendChild(hiddenInput);
+        }
+        hiddenInput.value = fullPhoneNumber;
+        
+        // Remove the original phone input from form submission
+        phoneInput.disabled = true;
+    });
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}تسجيل الدخول{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-sign-in-alt me-2"></i>تسجيل الدخول
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-4">
+                        <label for="username" class="form-label fw-bold">
+                            <i class="fas fa-user me-2"></i>اسم المستخدم
+                        </label>
+                        <input type="text" class="form-control form-control-lg" id="username" name="username" 
+                               placeholder="أدخل اسم المستخدم" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-bold">
+                            <i class="fas fa-lock me-2"></i>كلمة المرور
+                        </label>
+                        <input type="password" class="form-control form-control-lg" id="password" name="password" 
+                               placeholder="أدخل كلمة المرور" required>
+                    </div>
+                    
+                    <div class="d-grid mb-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>تسجيل الدخول
+                        </button>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

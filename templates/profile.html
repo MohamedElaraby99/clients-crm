@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}الملف الشخصي{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-user-circle me-2"></i>معلومات المستخدم
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-user-circle fa-4x text-primary"></i>
+                </div>
+                <h5>{{ current_user.username }}</h5>
+                <p class="text-muted">{{ current_user.email }}</p>
+                <p class="text-muted">
+                    <small>تاريخ التسجيل: {{ current_user.created_at.strftime('%Y-%m-%d') }}</small>
+                </p>
+                {% if current_user.is_admin %}
+                <span class="badge bg-warning text-dark">
+                    <i class="fas fa-crown me-1"></i>مدير النظام
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="stats-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">{{ current_user.clients|length }}</h3>
+                            <p class="mb-0">إجمالي العملاء</p>
+                        </div>
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="stats-card" style="background: linear-gradient(45deg, #56ab2f, #a8e6cf);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">
+                                {{ current_user.clients|selectattr('response', 'equalto', 'قبل العرض')|list|length }}
+                            </h3>
+                            <p class="mb-0">عملاء قبلوا العرض</p>
+                        </div>
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="stats-card" style="background: linear-gradient(45deg, #f7971e, #ffd200);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">
+                                {{ current_user.clients|selectattr('response', 'equalto', 'في الانتظار')|list|length }}
+                            </h3>
+                            <p class="mb-0">في الانتظار</p>
+                        </div>
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="stats-card" style="background: linear-gradient(45deg, #ff416c, #ff4b2b);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">
+                                {{ current_user.clients|selectattr('response', 'equalto', 'رفض')|list|length }}
+                            </h3>
+                            <p class="mb-0">رفضوا العرض</p>
+                        </div>
+                        <i class="fas fa-times-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-history me-2"></i>آخر النشاطات
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if current_user.clients %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>العميل</th>
+                                <th>الاستجابة</th>
+                                <th>التاريخ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for client in current_user.clients|sort(attribute='created_at', reverse=true) %}
+                            {% if loop.index <= 5 %}
+                            <tr>
+                                <td>{{ client.name }}</td>
+                                <td>
+                                    {% if client.response == 'قبل العرض' %}
+                                        <span class="response-badge response-accepted">{{ client.response }}</span>
+                                    {% elif client.response == 'رفض' %}
+                                        <span class="response-badge response-rejected">{{ client.response }}</span>
+                                    {% else %}
+                                        <span class="response-badge response-pending">{{ client.response }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small>{{ client.created_at.strftime('%Y-%m-%d %I:%M %p') }}</small>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center">لا توجد نشاطات حديثة</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

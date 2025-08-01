@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}إدارة العملاء لشركة فكرة{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-weight: 400;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.98) !important;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            border-radius: 20px 20px 0 0 !important;
+            border: none;
+            font-weight: 600;
+        }
+        
+        .btn {
+            border-radius: 15px;
+            font-weight: 600;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(45deg, #f7971e, #ffd200);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-outline-success {
+            border: 2px solid #56ab2f;
+            color: #56ab2f;
+            background: transparent;
+        }
+        
+        .btn-outline-success:hover {
+            background: #56ab2f;
+            color: white;
+        }
+        
+        .table {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .table thead th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 15px;
+        }
+        
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: scale(1.01);
+        }
+        
+        .alert {
+            border-radius: 15px;
+            border: none;
+            font-weight: 500;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.3rem rgba(102, 126, 234, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .response-badge {
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .response-accepted { 
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf); 
+            color: white; 
+        }
+        .response-rejected { 
+            background: linear-gradient(45deg, #ff416c, #ff4b2b); 
+            color: white; 
+        }
+        .response-pending { 
+            background: linear-gradient(45deg, #f7971e, #ffd200); 
+            color: white; 
+        }
+        .response-callback { 
+            background: linear-gradient(45deg, #667eea, #764ba2); 
+            color: white; 
+        }
+        
+        .filter-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .pagination {
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .page-link {
+            border-radius: 12px;
+            margin: 0 3px;
+            border: none;
+            color: #667eea;
+            font-weight: 600;
+            padding: 12px 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .page-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .page-item.active .page-link {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+        }
+        
+        .dropdown-menu {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(20px);
+            background: rgba(255,255,255,0.95);
+            padding: 10px;
+        }
+        
+        .dropdown-header {
+            padding: 10px 15px;
+            font-weight: 600;
+        }
+        
+        .dropdown-item {
+            border-radius: 10px;
+            margin: 2px 8px;
+            transition: all 0.3s ease;
+            padding: 10px 15px;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(-5px);
+        }
+        
+        .dropdown-item-text {
+            padding: 10px 15px;
+        }
+        
+        .dropdown-item-text .row {
+            margin: 0;
+        }
+        
+        .dropdown-item-text .col-6 {
+            padding: 0 5px;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .badge {
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-weight: 600;
+        }
+        
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .table-responsive {
+                font-size: 0.9em;
+            }
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .btn-group .btn {
+                margin: 0;
+                border-radius: 12px;
+            }
+            .card-body {
+                padding: 1.5rem;
+            }
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+            .filter-section {
+                padding: 20px;
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+        }
+        
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-users me-2"></i>إدارة العملاء لشركة فكرة
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                {% if current_user.is_authenticated %}
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">
+                            <i class="fas fa-home me-1"></i>الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('add_client') }}">
+                            <i class="fas fa-plus me-1"></i>إضافة عميل
+                        </a>
+                    </li>
+                    {% if current_user.is_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin') }}">
+                            <i class="fas fa-cog me-1"></i>الإدارة
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                           data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>{{ current_user.username }}
+                            {% if current_user.is_admin %}
+                            <i class="fas fa-crown text-warning ms-1"></i>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" style="min-width: 280px;">
+                            <!-- User Info Header -->
+                            <li class="dropdown-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-user-circle fa-2x text-primary"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-0 fw-bold">{{ current_user.username }}</h6>
+                                        <small class="text-muted">{{ current_user.email }}</small>
+                                        {% if current_user.is_admin %}
+                                        <div class="mt-1">
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="fas fa-crown me-1"></i>مدير النظام
+                                            </span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- User Stats -->
+                            <li class="dropdown-header">
+                                <small class="text-muted fw-bold">
+                                    <i class="fas fa-chart-bar me-1"></i>إحصائيات سريعة
+                                </small>
+                            </li>
+                            <li>
+                                <div class="dropdown-item-text">
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <div class="fw-bold text-primary">{{ current_user.clients|length }}</div>
+                                            <small class="text-muted">العملاء</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="fw-bold text-success">
+                                                {{ current_user.clients|selectattr('response', 'equalto', 'قبل العرض')|list|length }}
+                                            </div>
+                                            <small class="text-muted">قبلوا العرض</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Menu Items -->
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">
+                                <i class="fas fa-user-circle me-2"></i>الملف الشخصي
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('index') }}">
+                                <i class="fas fa-users me-2"></i>إدارة العملاء
+                            </a></li>
+                            {% if current_user.is_admin %}
+                            <li><a class="dropdown-item" href="{{ url_for('admin') }}">
+                                <i class="fas fa-cog me-2"></i>لوحة الإدارة
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('add_user') }}">
+                                <i class="fas fa-user-plus me-2"></i>إضافة مستخدم
+                            </a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">
+                            <i class="fas fa-sign-in-alt me-1"></i>تسجيل الدخول
+                        </a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

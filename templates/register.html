@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}إنشاء حساب جديد{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card">
+            <div class="card-header bg-success text-white text-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-user-plus me-2"></i>إنشاء حساب جديد
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="username" class="form-label fw-bold">
+                                <i class="fas fa-user me-2"></i>اسم المستخدم *
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="username" name="username" 
+                                   placeholder="أدخل اسم المستخدم" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="email" class="form-label fw-bold">
+                                <i class="fas fa-envelope me-2"></i>البريد الإلكتروني *
+                            </label>
+                            <input type="email" class="form-control form-control-lg" id="email" name="email" 
+                                   placeholder="أدخل البريد الإلكتروني" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="password" class="form-label fw-bold">
+                                <i class="fas fa-lock me-2"></i>كلمة المرور *
+                            </label>
+                            <input type="password" class="form-control form-control-lg" id="password" name="password" 
+                                   placeholder="أدخل كلمة المرور" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="confirm_password" class="form-label fw-bold">
+                                <i class="fas fa-lock me-2"></i>تأكيد كلمة المرور *
+                            </label>
+                            <input type="password" class="form-control form-control-lg" id="confirm_password" name="confirm_password" 
+                                   placeholder="أعد إدخال كلمة المرور" required>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid mb-4">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>إنشاء الحساب
+                        </button>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="text-muted mb-3">لديك حساب بالفعل؟</p>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>تسجيل الدخول
+                    </a>
+                </div>
+                
+                <!-- Password requirements -->
+                <div class="mt-4 p-3 bg-light rounded-3">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-shield-alt me-1"></i>متطلبات كلمة المرور:
+                    </h6>
+                    <small class="text-muted">
+                        • يجب أن تكون كلمة المرور 6 أحرف على الأقل<br>
+                        • تأكد من تطابق كلمتي المرور
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    
+    function validatePassword() {
+        if (password.value !== confirmPassword.value) {
+            confirmPassword.setCustomValidity('كلمات المرور غير متطابقة');
+        } else {
+            confirmPassword.setCustomValidity('');
+        }
+    }
+    
+    password.addEventListener('change', validatePassword);
+    confirmPassword.addEventListener('keyup', validatePassword);
+});
+</script>
+{% endblock %} 
